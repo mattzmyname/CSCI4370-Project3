@@ -7,6 +7,13 @@
 
 import static java.lang.System.out;
 import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import jxl.*;
+import jxl.write.*;
+import jxl.write.Boolean;
+import jxl.write.Number;
+import jxl.write.biff.RowsExceededException;
 
 
 /*****************************************************************************************
@@ -112,47 +119,103 @@ public class TestTupleGenerator
             out.println ();
         } // for
        
-        
+      //Excel File attempt
+        try {
+            File exlFile = new File("p3data.xls");
+            WritableWorkbook writableWorkbook = Workbook
+                    .createWorkbook(exlFile);
+ 
+            WritableSheet worksheet = writableWorkbook.createSheet("Sheet1", 0);
       //Variable decs for time recording
         long startTime;
         long endTime;
         double duration;
         
         //Variable decs for random tuple selection
-        int studentInt;
-        int professorInt;
-        int courseInt;
-        int transcriptInt;
-        int teachingInt;
+        int rowCounter=0;
         Random ran = new Random();
 
-        System.out.println("\tStudent Select Transcript 10000 ");
+        System.out.println("\tStudent Select 10000 ");
+        rowCounter++;
+        Label select1 = new Label (rowCounter,0, "Student Select 10000");
+        worksheet.addCell(select1);
+       
         for( int i = 0; i < 50 ; i++){
-            studentInt = ran.nextInt(10000);
             startTime = System.nanoTime();
             Student.select(t -> t[Student.col("id")].equals( resultTest[0][ran.nextInt(10000)][0].toString()));
             endTime = System.nanoTime();
             duration = (double)(endTime - startTime)/1000000000.0;
             System.out.println("\t\t" + duration + " Secs");
+            Number num = new Number(rowCounter, 1+i, duration);
+            worksheet.addCell(num);
         }//for
+        
        
-        System.out.println("\tProfessor Select Transcript 1000 ");
+        System.out.println("\tProfessor Select 1000 ");
+        rowCounter++;
+        Label select2 = new Label (rowCounter,0, "Professor Select 1000 ");
+        worksheet.addCell(select2);
         for( int i = 0; i < 50 ; i++){
             startTime = System.nanoTime();
             Professor.select(t -> t[Professor.col("id")].equals( resultTest[1][ran.nextInt(1000)][0].toString()));
             endTime = System.nanoTime();
             duration = (double)(endTime - startTime)/1000000000.0;
             System.out.println("\t\t" + duration + " Secs");
+            Number num = new Number(rowCounter, 1+i, duration);
+            worksheet.addCell(num);
         }//for
         
+        System.out.println("\tCourse Select 2000 ");
+        rowCounter++;
+        Label select3 = new Label (rowCounter,0, "Course Select 2000 ");
+        worksheet.addCell(select3);
+        for( int i = 0; i < 50 ; i++){
+            startTime = System.nanoTime();
+            Course.select(t -> t[Course.col("crsCode")].equals( resultTest[2][ran.nextInt(1000)][0].toString()));
+            endTime = System.nanoTime();
+            duration = (double)(endTime - startTime)/1000000000.0;
+            System.out.println("\t\t" + duration + " Secs");
+            Number num = new Number(rowCounter, 1+i, duration);
+            worksheet.addCell(num);
+        }//for
         System.out.println("\tStudent join with Transcript - 10000 tuples + 50000 tuples");
+        rowCounter++;
+        Label join1 = new Label (rowCounter,0, "Student Join Transcript");
+        worksheet.addCell(join1);
+        for( int i = 0; i < 50 ; i++){
+            startTime = System.nanoTime();
+            Table tempTable = Student.join ("id",  "studId", Transcript);
+            endTime = System.nanoTime();
+            duration = (double)(endTime - startTime)/1000000000.0;
+            System.out.println("\t\t" + (duration) + " Secs");
+            Number num = new Number(rowCounter, 1+i, duration);
+            worksheet.addCell(num);
+        }//for
+        System.out.println("\tStudent ijoin with Transcript - 10000 tuples + 50000 tuples");
+        rowCounter++;
+        Label join2 = new Label (rowCounter,0, "Student iJoin Transcript");
+        worksheet.addCell(join2);
         for( int i = 0; i < 50 ; i++){
             startTime = System.nanoTime();
             Table tempTable = Student.i_join ("id",  "studId", Transcript);
             endTime = System.nanoTime();
             duration = (double)(endTime - startTime)/1000000000.0;
             System.out.println("\t\t" + (duration) + " Secs");
+            Number num = new Number(rowCounter, 1+i, duration);
+            worksheet.addCell(num);
         }//for
+        
+        writableWorkbook.write();
+        writableWorkbook.close();
+       }//try excel
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (RowsExceededException e) {
+            e.printStackTrace();
+        } catch (WriteException e) {
+            e.printStackTrace();
+        }
     } // main
 
 } // TestTupleGenerator

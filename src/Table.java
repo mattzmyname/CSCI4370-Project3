@@ -72,8 +72,8 @@ public class Table
 
     /** The map type to be used for indices.  Change as needed.
      */
-    private static final MapType mType = MapType.TREE_MAP;
-    //private static final MapType mType = MapType.LINHASH_MAP;
+    //private static final MapType mType = MapType.TREE_MAP;
+    private static final MapType mType = MapType.LINHASH_MAP;
     //private static final MapType mType = MapType.BPTREE_MAP;
 
     /************************************************************************************
@@ -394,17 +394,29 @@ public class Table
 
     	for(int i = 0; i < u_attrs.length; i++){
     		Comparable[] ttup = tuples.get(i);
-    		KeyType keyVal = new KeyType(extract(ttup,u_attrs)); //this will be our foreign key to compare
-    		Comparable[] utup = table2.index.get(keyVal);
-    		if(ttup==utup){
-                rows.add(ArrayUtil.concat(ttup,utup));
-              }
 
+        out.println("ttup");
+        for(Comparable t:ttup){
+          out.println(t);
         }
 
+        KeyType keyVal = new KeyType(extract(ttup,u_attrs)); //this will be our foreign key to compare
+    		Comparable[] utup = table2.index.get(keyVal);
+
+        out.println("utup:");
+        for(Comparable u:utup){
+          out.println(u);
+        }
+
+        if(ttup==utup){
+          out.println(ttup + " is the same as " + utup + "?");
+          rows.add(ArrayUtil.concat(ttup,utup));
+        }
+        out.println(ttup + " is the same as " + utup + "?");
+      }
 
 
-        return new Table((name + count++), ArrayUtil.concat(attribute, table2.attribute), 
+        return new Table((name + count++), ArrayUtil.concat(attribute, table2.attribute),
         								ArrayUtil.concat(domain, table2.domain), key, rows);
     } // i_join
 

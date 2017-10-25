@@ -92,7 +92,7 @@ public class LinHashMap <K, V>
     public Set <Map.Entry <K, V>> entrySet ()
     {
         Set <Map.Entry <K, V>> enSet = new HashSet <> ();
-        for (int i = 0; i < this.size(); i++) {
+        for (int i = 0; i < hTable.size(); i++) {
             for (Bucket b = hTable.get(i); b != null; b = b.next) {
                 for(int k = 0; k< b.nKeys; k++){
                      enSet.add (new AbstractMap.SimpleEntry <K, V> (b.key[k], b.value[k]));
@@ -146,13 +146,13 @@ public class LinHashMap <K, V>
 	        	hTable.get(i).key[hTable.get(i).nKeys]= key;
 	        	hTable.get(i).value[hTable.get(i).nKeys]=value;
 	        	hTable.get(i).nKeys++;
-        }else{ 
+        }else{
 	        	hTable.get(i).key[hTable.get(i).nKeys] = key;
 	        	hTable.get(i).value[hTable.get(i).nKeys]= value;
 	        	hTable.get(i).nKeys++;
         	}
-        	
-       
+
+
 
         return null;
     } // put
@@ -173,19 +173,21 @@ public class LinHashMap <K, V>
     {
         out.println ("Hash Table (Linear Hashing)");
         out.println ("-------------------------------------------");
-        for (int i = 0; i < this.size(); i++) {
+
+        for (int i = 0; i < hTable.size(); i++) {
             out.print (i + ":\t");
             boolean notFirst = false;
+
             for (Bucket b = hTable.get(i); b != null; b = b.next) {
                 if (notFirst) out.print ("--> ");
                 for(int k = 0; k< b.nKeys; k++){
-                    out.print ("[ " + b.key + " ]\t");
+                    out.print ("[ " + b.key[k] + " ] ");
                     notFirst = true;
                 }
             } // for
+
             out.println ();
         	}//for
-
         out.println ("-------------------------------------------");
     } // print
 
@@ -196,7 +198,10 @@ public class LinHashMap <K, V>
      */
     private int h (Object key)
     {
-        return key.hashCode () % mod1;
+      int k = key.hashCode () % mod1;
+      if(k<0){
+        return k+mod1;
+      }else return k;
     } // h
 
     /********************************************************************************
@@ -206,7 +211,10 @@ public class LinHashMap <K, V>
      */
     private int h2 (Object key)
     {
-        return key.hashCode () % mod2;
+      int k = key.hashCode () % mod2;
+      if(k<0){
+        return k+mod2;
+      }else return k;
     } // h2
 
    private void add4buckets()
@@ -221,8 +229,8 @@ public class LinHashMap <K, V>
     public static void main (String [] args)
     {
 
-        int totalKeys    = 30;
-        boolean RANDOMLY = true;
+        int totalKeys    = 50;
+        boolean RANDOMLY = false;
 
         LinHashMap <Integer, Integer> ht = new LinHashMap <> (Integer.class, Integer.class);
         if (args.length == 1) totalKeys = Integer.valueOf (args [0]);
@@ -231,11 +239,14 @@ public class LinHashMap <K, V>
             Random rng = new Random ();
             for (int i = 1; i <= totalKeys; i += 2) ht.put (rng.nextInt (2 * totalKeys), i * i);
         } else {
-            for (int i = 1; i <= totalKeys; i += 2) ht.put (i, i * i);
+            for (int i = 1; i <= totalKeys; i += 1) {
+              ht.put (i, i * i);
+              ht.print ();
+            }
         } // if
 
         ht.print ();
-        for (int i = 0; i <= totalKeys; i++) {
+        for (int i = 0; i <= totalKeys-1; i++) {
             out.println ("key = " + i + " value = " + ht.get (i));
         } // for
         out.println ("-------------------------------------------");

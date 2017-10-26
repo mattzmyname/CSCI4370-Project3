@@ -66,7 +66,7 @@ public class TestTupleGenerator
 
         String [] tables = { "Student", "Professor", "Course", "Teaching", "Transcript" };
         
-        int tups [] = new int [] { 10000, 1000, 2000, 50000, 5000 };
+        int tups [] = new int [] { 10000, 1000, 2000, 50000, 10000 };
     
         System.out.println("Generating Tuples in resultTest...");
         Comparable [][][] resultTest = test.generate (tups);
@@ -135,14 +135,14 @@ public class TestTupleGenerator
         int rowCounter=0;
         Random ran = new Random();
 
-        System.out.println("\tStudent Select 10000 ");
+        System.out.println("\tStudent Point Q Select " + tups[0]);
         rowCounter++;
-        Label select1 = new Label (rowCounter,0, "Student Select 10000");
+        Label select1 = new Label (rowCounter,0, "Point Q Student Select "+tups[0]);
         worksheet.addCell(select1);
        
         for( int i = 0; i < 50 ; i++){
             startTime = System.nanoTime();
-            Student.select(t -> t[Student.col("id")].equals( resultTest[0][ran.nextInt(10000)][0].toString()));
+            Student.select(t -> t[Student.col("id")].equals( resultTest[0][ran.nextInt(tups[0])][0].toString()));
             endTime = System.nanoTime();
             duration = (double)(endTime - startTime)/1000000000.0;
             System.out.println("\t\t" + duration + " Secs");
@@ -151,13 +151,13 @@ public class TestTupleGenerator
         }//for
         
        
-        System.out.println("\tProfessor Select 1000 ");
+        System.out.println("Student Range Q bpSelect  "+ tups[0]);
         rowCounter++;
-        Label select2 = new Label (rowCounter,0, "Professor Select 1000 ");
+        Label select2 = new Label (rowCounter,0, "Bplus Range Q Select  "+tups[0]);
         worksheet.addCell(select2);
         for( int i = 0; i < 50 ; i++){
             startTime = System.nanoTime();
-            Professor.select(t -> t[Professor.col("id")].equals( resultTest[1][ran.nextInt(1000)][0].toString()));
+            Student.select( new KeyType (10),new KeyType (20));
             endTime = System.nanoTime();
             duration = (double)(endTime - startTime)/1000000000.0;
             System.out.println("\t\t" + duration + " Secs");
@@ -165,20 +165,8 @@ public class TestTupleGenerator
             worksheet.addCell(num);
         }//for
         
-        System.out.println("\tCourse Select 2000 ");
-        rowCounter++;
-        Label select3 = new Label (rowCounter,0, "Course Select 2000 ");
-        worksheet.addCell(select3);
-        for( int i = 0; i < 50 ; i++){
-            startTime = System.nanoTime();
-            Course.select(t -> t[Course.col("crsCode")].equals( resultTest[2][ran.nextInt(1000)][0].toString()));
-            endTime = System.nanoTime();
-            duration = (double)(endTime - startTime)/1000000000.0;
-            System.out.println("\t\t" + duration + " Secs");
-            Number num = new Number(rowCounter, 1+i, duration);
-            worksheet.addCell(num);
-        }//for
-        System.out.println("\tStudent join with Transcript - 10000 tuples + 50000 tuples");
+       
+        System.out.println("\tStudent join with Transcript - " + tups[0] + " tuples + " +tups[4] +" tuples");
         rowCounter++;
         Label join1 = new Label (rowCounter,0, "Student Join Transcript");
         worksheet.addCell(join1);
@@ -190,8 +178,11 @@ public class TestTupleGenerator
             System.out.println("\t\t" + (duration) + " Secs");
             Number num = new Number(rowCounter, 1+i, duration);
             worksheet.addCell(num);
+            //tempTable.print();
         }//for
-        System.out.println("\tStudent ijoin with Transcript - 10000 tuples + 50000 tuples");
+        
+        /*
+        System.out.println("Student ijoin with Transcript - 10000 tuples + 50000 tuples");
         rowCounter++;
         Label join2 = new Label (rowCounter,0, "Student iJoin Transcript");
         worksheet.addCell(join2);
@@ -204,7 +195,7 @@ public class TestTupleGenerator
             Number num = new Number(rowCounter, 1+i, duration);
             worksheet.addCell(num);
         }//for
-        
+        */
         writableWorkbook.write();
         writableWorkbook.close();
        }//try excel

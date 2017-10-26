@@ -83,7 +83,7 @@ public class Table
     {
         switch (mType) {
         //case TREE_MAP:    return new TreeMap <> ();
-        case LINHASH_MAP: return new LinHashMap <> (KeyType.class, Comparable [].class);
+        case LINHASH_MAP: return new LinHashMap <> (KeyType.class, Comparable [].class, 5);
         case TREE_MAP:    return new TreeMap <> ();
         //case LINHASH_MAP: return new LinHashMap <> (KeyType.class, Comparable [].class);
         case BPTREE_MAP:  return new BpTreeMap <> (KeyType.class, Comparable [].class);
@@ -438,7 +438,7 @@ public class Table
         String [] u_attrs = attributes2.split (" ");
 
         List <Comparable []> rows = new ArrayList <> ();
-        LinHashMap <Comparable[], Comparable[]> hmap = new LinHashMap(Comparable[].class, Comparable[].class);
+        LinHashMap <Comparable[], Comparable[]> hmap = new LinHashMap(Comparable[].class, Comparable[].class,4);
         if(t_attrs.length != u_attrs.length){
     		out.println("Please use attributes that are equivalent");
     		return null;

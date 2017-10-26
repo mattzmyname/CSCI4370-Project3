@@ -178,49 +178,48 @@ public class LinHashMap <K, V>
                 Bucket temp2 = new Bucket(null);//replace the split
                 Bucket temp3 = new Bucket(null);//the new bucket
                 temp = hTable.get(split);//the bucket to split
-                for(int p=0; p<temp.nKeys; p++){//need to check for when the split bucket has an overflow
-                    int z = h2(temp.key[p]);
-                    if(z == split){
-                        if(temp2.next ==null){
-                            temp2.next = new Bucket(null);
-                            temp2 = temp2.next;
-                        }
-                        temp2.key[temp2.nKeys] = temp.key[p];
-                        temp2.value[temp2.nKeys] = temp.value[p];
-                        out.println("What is thisL "+temp2.nKeys);
-                        temp2.nKeys++;
-                        temp2.next = new Bucket(null);
-                        out.println("\tSplit:\t\tKey: " + temp.key[p] + " And the value of :" + temp.value[p] + " nKeys: "+temp2.nKeys);
+                for(Bucket b = temp; b != null; b = b.next){
+                  for(int p=0; p<b.nKeys; p++){
+                      int z = h2(b.key[p]);
+                      if(z == split){
+                          if(temp2.next ==null){
+                              temp2.next = new Bucket(null);
+                              temp2 = temp2.next;
+                          }
 
-                        hTable.set(split,temp2);
-                    }else{
-                        if(temp3.next == null){
-                            temp3.next = new Bucket(null);
-                            temp3 = temp3.next;
-                        }
-                        temp3.key[temp3.nKeys] = temp.key[p];
-                        temp3.value[temp3.nKeys] = temp.value[p];
-                        out.println("What is thisL "+temp3.nKeys);
-                        temp3.nKeys++;
-                        temp3.next = new Bucket(null);
-                        hTable.set(z,temp3);
-                        out.println("\t\t\tKey: " + temp.key[p] + " And the value of :" + temp.value[p]+ " nKeys: "+temp3.nKeys);
+                          temp2.key[temp2.nKeys] = b.key[p];
+                          temp2.value[temp2.nKeys] = b.value[p];
+                          out.println("What is thisL "+temp2.nKeys + " On P= " + p);
+                          temp2.nKeys++;
+                          temp2.next = new Bucket(null);
+                          out.println("\tSplit:\t\tKey: " + b.key[p] + " And the value of :" + b.value[p] + " nKeys: "+temp2.nKeys);
 
-                    }
-                    out.println("Temp2.nKeys: "+ temp2.nKeys);
-                    out.println("Temp3.nKeys: "+ temp3.nKeys);
-                }
+                          hTable.set(split,temp2);
+                      }else{
+                          if(temp3.next == null){
+                              temp3.next = new Bucket(null);
+                              temp3 = temp3.next;
+                          }
+                          temp3.key[temp3.nKeys] = b.key[p];
+                          temp3.value[temp3.nKeys] = b.value[p];
+                          out.println("What is thisL "+temp3.nKeys);
+                          temp3.nKeys++;
+                          temp3.next = new Bucket(null);
+                          hTable.set(z,temp3);
+                          out.println("\t\t\tKey: " + b.key[p] + " And the value of :" + b.value[p]+ " nKeys: "+temp3.nKeys);
+                      }
+
+                  }//for
+                }// Goes through the overflow if there is one.
                 //hTable.set(split,temp2);
                 K[] what = temp2.key;
-                for(K t:what){out.println(t);}
-
-
-                out.println("temp2 nKeys:"+temp2.nKeys);
-                out.println("temp3 nKeys:"+temp3.nKeys);
-
-
-
-
+                K[] ok = temp3.key;
+                out.println("Temp2.nKeys: "+ temp2.nKeys);
+                for(K t:what){out.print(t+"\t");}
+                out.println();
+                out.println("Temp3.nKeys: "+ temp3.nKeys);
+                for(K t:ok){out.print(t+"\t");}
+                out.println();
 
                 if(split == mod1 -1 ){
                     mod1= mod1*2;
@@ -229,7 +228,7 @@ public class LinHashMap <K, V>
                 }else{
                     split++;
                 }
-              }
+              }//else
         }//split else
         return null;
         /*
@@ -267,7 +266,7 @@ public class LinHashMap <K, V>
     private void print ()
     {
 
-        out.println ("Hash Table (Linear Hashing)" + "Split at-----> " + split);
+        out.println ("Hash Table (Linear Hashing)" + "Split at-----> " + split + " Mod1: " + mod1 + " Mod2: " + mod2);
         out.println ("-------------------------------------------");
 
         for (int i = 0; i < hTable.size(); i++) {
@@ -326,7 +325,7 @@ public class LinHashMap <K, V>
     public static void main (String [] args)
     {
 
-        int totalKeys    = 18;
+        int totalKeys    = 400;
         boolean RANDOMLY = false;
 
         LinHashMap <Integer, Integer> ht = new LinHashMap <> (Integer.class, Integer.class, 4);

@@ -149,7 +149,7 @@ public class LinHashMap <K, V>
           temp.value[temp.nKeys]=value;
           temp.nKeys++;
         }else{
-          out.println("Then Split!");
+          //out.println("Then Split!");
           hTable.add(new Bucket(null));
           while(temp.next != null){
             temp = temp.next;
@@ -182,36 +182,36 @@ public class LinHashMap <K, V>
                   for(int p=0; p<b.nKeys; p++){
                       int z = h2(b.key[p]);
                       if(z == split){
-                          if(temp2.next ==null){
+                          if(temp2.next ==null ||temp2.nKeys==SLOTS){
                               temp2.next = new Bucket(null);
                               temp2 = temp2.next;
                           }
-
                           temp2.key[temp2.nKeys] = b.key[p];
                           temp2.value[temp2.nKeys] = b.value[p];
-                          out.println("What is thisL "+temp2.nKeys + " On P= " + p);
+                          //out.println("What is thisL "+temp2.nKeys + " On P= " + p);
                           temp2.nKeys++;
                           temp2.next = new Bucket(null);
-                          out.println("\tSplit:\t\tKey: " + b.key[p] + " And the value of :" + b.value[p] + " nKeys: "+temp2.nKeys);
+                          //out.println("\tSplit:\t\tKey: " + b.key[p] + " And the value of :" + b.value[p] + " nKeys: "+temp2.nKeys);
 
                           hTable.set(split,temp2);
                       }else{
-                          if(temp3.next == null){
+                          if(temp3.next == null|| temp3.nKeys==SLOTS){
                               temp3.next = new Bucket(null);
                               temp3 = temp3.next;
                           }
                           temp3.key[temp3.nKeys] = b.key[p];
                           temp3.value[temp3.nKeys] = b.value[p];
-                          out.println("What is thisL "+temp3.nKeys);
+                          //out.println("What is thisL "+temp3.nKeys);
                           temp3.nKeys++;
                           temp3.next = new Bucket(null);
                           hTable.set(z,temp3);
-                          out.println("\t\t\tKey: " + b.key[p] + " And the value of :" + b.value[p]+ " nKeys: "+temp3.nKeys);
+                          //out.println("\t\t\tKey: " + b.key[p] + " And the value of :" + b.value[p]+ " nKeys: "+temp3.nKeys);
                       }
 
                   }//for
                 }// Goes through the overflow if there is one.
                 //hTable.set(split,temp2);
+                /*
                 K[] what = temp2.key;
                 K[] ok = temp3.key;
                 out.println("Temp2.nKeys: "+ temp2.nKeys);
@@ -220,7 +220,7 @@ public class LinHashMap <K, V>
                 out.println("Temp3.nKeys: "+ temp3.nKeys);
                 for(K t:ok){out.print(t+"\t");}
                 out.println();
-
+                */
                 if(split == mod1 -1 ){
                     mod1= mod1*2;
                     mod2= mod1*2;
@@ -325,26 +325,36 @@ public class LinHashMap <K, V>
     public static void main (String [] args)
     {
 
-        int totalKeys    = 400;
-        boolean RANDOMLY = false;
+        int totalKeys    = 500;
+        boolean RANDOMLY = true;
 
         LinHashMap <Integer, Integer> ht = new LinHashMap <> (Integer.class, Integer.class, 4);
         if (args.length == 1) totalKeys = Integer.valueOf (args [0]);
-
+        int[] random = new int[totalKeys];
+        int ran;
         if (RANDOMLY) {
             Random rng = new Random ();
-            for (int i = 1; i <= totalKeys; i += 2) ht.put (rng.nextInt (2 * totalKeys), i * i);
+            for (int i = 1; i <= totalKeys; i += 2){
+              ran = rng.nextInt (2 * totalKeys);
+              ht.put (ran, i * i);
+              random[i-1] = ran;
+              ht.print ();
+            }
         } else {
             for (int i = 1; i <= totalKeys; i += 1) {
               ht.put (i, i * i);
-              ht.print ();
+              //ht.print ();
             }
         } // if
 
         ht.print ();
-        for (int i = 0; i <= totalKeys; i++) {
-            out.println ("key = " + i + " value = " + ht.get (i));
-        } // for
+        if(RANDOMLY){
+          for(int x:random)out.println ("key = " + x + " value = " + ht.get (x));
+        }else{
+          for (int i = 0; i <= totalKeys; i++) {
+              out.println ("key = " + i + " value = " + ht.get (i));
+          } // for
+        }
         out.println ("-------------------------------------------");
         out.println ("Average number of buckets accessed = " + ht.count / (double) totalKeys);
     } // main

@@ -400,28 +400,17 @@ public class Table
     		return null;
     	}
 
-    	for(int i = 0; i < u_attrs.length; i++){
-    		Comparable[] ttup = tuples.get(i);
 
-        out.println("ttup");
-        for(Comparable t:ttup){
-          out.println(t);
-        }
-
-        KeyType keyVal = new KeyType(extract(ttup,u_attrs)); //this will be our foreign key to compare
-    		Comparable[] utup = table2.index.get(keyVal);
-
-        out.println("utup:");
-        for(Comparable u:utup){
-          out.println(u);
-        }
-
-        if(ttup==utup){
-          out.println(ttup + " is the same as " + utup + "?");
-          rows.add(ArrayUtil.concat(ttup,utup));
-        }
-        out.println(ttup + " is the same as " + utup + "?");
-      }
+          	for(int i = 0; i < u_attrs.length; i++){
+          		Comparable[] ttup = tuples.get(i);
+              KeyType keyVal = new KeyType(extract(ttup,u_attrs)); //this will be our foreign key to compare
+          		Comparable[] utup = table2.index.get(keyVal);
+              if(ttup==utup){
+                out.println(ttup + " is the same as " + utup + "?");
+                rows.add(ArrayUtil.concat(ttup,utup));
+              }
+              out.println(ttup + " is the same as " + utup + "?");
+            }
 
         return new Table((name + count++), ArrayUtil.concat(attribute, table2.attribute),
         								ArrayUtil.concat(domain, table2.domain), key, rows);
@@ -436,54 +425,81 @@ public class Table
      * @param table2      the rhs table in the join operation
      * @return  a table with tuples satisfying the equality predicate
      */
-    public Table h_join (String attributes1, String attributes2, Table table2)
-    {
-    	out.println ("RA> " + name + ".h_join (" + attributes1 + ", " + attributes2 + ", "
-                                               + table2.name + ")");
+     public Table h_join (String attributes1, String attributes2, Table table2)
+     {
+     	out.println ("RA> " + name + ".h_join (" + attributes1 + ", " + attributes2 + ", "
+                                                + table2.name + ")");
 
-      String [] t_attrs = attributes1.split (" ");
-      String [] u_attrs = attributes2.split (" ");
+         String [] t_attrs = attributes1.split (" ");
+         String [] u_attrs = attributes2.split (" ");
 
-      List <Comparable []> rows = new ArrayList <> ();
-      LinHashMap <Comparable[], Comparable[]> hmap = new LinHashMap(Comparable[].class, Comparable[].class,5);
-      if(t_attrs.length != u_attrs.length){
-    		out.println("Please use attributes that are equivalent");
-    		return null;
-      }
+         List <Comparable []> rows = new ArrayList <> ();
+         LinHashMap <KeyType, Comparable[]> hmap = new LinHashMap(KeyType.class, Comparable[].class,5);
+         if(t_attrs.length != u_attrs.length){
+     		out.println("Please use attributes that are equivalent");
+     		return null;
+     	}
 
-	    if(this.tuples.size() >= table2.tuples.size()) {
-	         for( Comparable[] tuple1: this.tuples){
-	         	hmap.put(extract(tuple1,t_attrs),tuple1) ;
+         for(Comparable[] t:table2.tuples){
+             KeyType keyVal = new KeyType(table2.extract(t, u_attrs));
+             out.println(keyVal);
+             for(Comparable y:t)out.print(y + "\t");
+             out.println();
+             hmap.put(keyVal,t);
+         }
 
-	         }
-	         for(Comparable[] tuple2: table2.tuples){
-	        	Comparable[] utup = table2.extract(tuple2,u_attrs);
-	         	if(hmap.get(utup)!= null)
-	         	{
-	         		rows.add(ArrayUtil.concat(hmap.get(utup),tuple2));
+         for(Comparable[] iT:this.tuples){
+             KeyType kv = new KeyType(extract(iT,t_attrs));
+             out.println(kv);
+             Comparable[] bich = hmap.get(kv);
+             if(bich!=null) {
+                 for (Comparable b : bich) out.print(b + "\t");
+                 rows.add(ArrayUtil.concat(iT, bich));
+             }
+         }
+         /*
+         for(String attrs:t_attrs){
+             for(Comparable[] it:this.tuples){
+                 if(){
+                     out.println("KYS");
+                 }
+             }
+         }*/
 
-	         	}
-	         }
-	    }//if
-	    else
-	    {
-		   for( Comparable[] tuple1: table2.tuples){
-	        	hmap.put(extract(tuple1,t_attrs),tuple1) ;
+         /*
+ 	    if(this.tuples.size() >= table2.tuples.size()) {
+ 	         for( Comparable[] tuple1: this.tuples){
+ 	         	hmap.put(extract(tuple1,t_attrs),tuple1) ;
 
-	        }
-	        for(Comparable[] tuple2: this.tuples){
-	       	Comparable[] utup = table2.extract(tuple2,u_attrs);
-	        	if(hmap.get(utup)!= null)
-	        	{
-	        		rows.add(ArrayUtil.concat(hmap.get(utup),tuple2));
+ 	         }
+ 	         for(Comparable[] tuple2: table2.tuples){
+ 	        	Comparable[] utup = table2.extract(tuple2,u_attrs);
+ 	         	if(hmap.get(utup)!= null)
+ 	         	{
+ 	         		rows.add(ArrayUtil.concat(hmap.get(utup),tuple2));
 
-	        	}
-	        }
-		}
+ 	         	}
+ 	         }
+ 	    }
+ 	    else
+ 	    {
+ 		   for( Comparable[] tuple1: table2.tuples){
+ 	        	hmap.put(extract(tuple1,t_attrs),tuple1) ;
 
-        return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
-        									 ArrayUtil.concat (domain, table2.domain), key, rows);
-    } // h_join
+ 	        }
+ 	        for(Comparable[] tuple2: this.tuples){
+ 	       	Comparable[] utup = table2.extract(tuple2,u_attrs);
+ 	        	if(hmap.get(utup)!= null)
+ 	        	{
+ 	        		rows.add(ArrayUtil.concat(hmap.get(utup),tuple2));
+
+ 	        	}
+ 	        }
+ 		}
+ 		*/
+         return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
+         									 ArrayUtil.concat (domain, table2.domain), key, rows);
+     } // h_join
 
     /************************************************************************************
      * Join this table and table2 by performing an "natural join".  Tuples from both tables

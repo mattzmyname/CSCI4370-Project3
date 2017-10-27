@@ -75,7 +75,7 @@ public class Table
     //private static final MapType mType = MapType.NO_MAP;
     //private static final MapType mType = MapType.TREE_MAP;
     private static final MapType mType = MapType.LINHASH_MAP;
-    //private static final MapType mType = MapType.BPTREE_MAP;
+     //private static final MapType mType = MapType.BPTREE_MAP;
 
     /************************************************************************************
      * Make a map (index) given the MapType.
@@ -84,7 +84,7 @@ public class Table
     {
         switch (mType) {
         //case TREE_MAP:    return new TreeMap <> ();
-        case LINHASH_MAP: return new LinHashMap <> (KeyType.class, Comparable [].class, 5);
+        case LINHASH_MAP: return new LinHashMap <> (KeyType.class, Comparable [].class,4);
         case TREE_MAP:    return new TreeMap <> ();
         //case LINHASH_MAP: return new LinHashMap <> (KeyType.class, Comparable [].class);
         case BPTREE_MAP:  return new BpTreeMap <> (KeyType.class, Comparable [].class);
@@ -238,7 +238,6 @@ public class Table
         out.println ("RA> " + name + ".select between (" + keyVal1 + ") and " + keyVal2);
 
         List <Comparable []> rows = new ArrayList <> ();
-
         Set <Map.Entry<KeyType, Comparable []>> what = index.entrySet().stream()
         .filter(p -> keyVal1.compareTo(p.getKey()) <=0)
         .filter(p -> keyVal2.compareTo(p.getKey()) >0)
@@ -246,8 +245,6 @@ public class Table
         for (Map.Entry<KeyType, Comparable []> entry : what) {
           rows.add(index.get(entry.getKey()));
         }
-
-
         return new Table (name + count++, attribute, domain, key, rows);
     } // range_select
 
@@ -353,11 +350,7 @@ public class Table
         String [] u_attrs = attributes2.split (" ");
 
         List <Comparable []> rows = new ArrayList <> ();
-
-        if(t_attrs.length!=u_attrs.length){
-          out.println("Lets do this with the same number of attributes on both sides, alright?");
-          return null;
-        }
+//        rows = tuples.stream().filter(a -> ) tuples.collect(Collectors.toList());
 
         for(String t:t_attrs){
           for(String u:u_attrs){
@@ -423,6 +416,7 @@ public class Table
         out.println(ttup + " is the same as " + utup + "?");
       }
 
+
         return new Table((name + count++), ArrayUtil.concat(attribute, table2.attribute),
         								ArrayUtil.concat(domain, table2.domain), key, rows);
     } // i_join
@@ -441,15 +435,15 @@ public class Table
     	out.println ("RA> " + name + ".h_join (" + attributes1 + ", " + attributes2 + ", "
                                                + table2.name + ")");
 
-      String [] t_attrs = attributes1.split (" ");
-      String [] u_attrs = attributes2.split (" ");
+        String [] t_attrs = attributes1.split (" ");
+        String [] u_attrs = attributes2.split (" ");
 
-      List <Comparable []> rows = new ArrayList <> ();
-      LinHashMap <Comparable[], Comparable[]> hmap = new LinHashMap(Comparable[].class, Comparable[].class,5);
-      if(t_attrs.length != u_attrs.length){
+        List <Comparable []> rows = new ArrayList <> ();
+        LinHashMap <Comparable[], Comparable[]> hmap = new LinHashMap(Comparable[].class, Comparable[].class,4);
+        if(t_attrs.length != u_attrs.length){
     		out.println("Please use attributes that are equivalent");
     		return null;
-      }
+    	}
 
 	    if(this.tuples.size() >= table2.tuples.size()) {
 	         for( Comparable[] tuple1: this.tuples){
@@ -464,7 +458,7 @@ public class Table
 
 	         	}
 	         }
-	    }//if
+	    }
 	    else
 	    {
 		   for( Comparable[] tuple1: table2.tuples){
@@ -480,7 +474,6 @@ public class Table
 	        	}
 	        }
 		}
-
         return new Table (name + count++, ArrayUtil.concat (attribute, table2.attribute),
         									 ArrayUtil.concat (domain, table2.domain), key, rows);
     } // h_join

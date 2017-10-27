@@ -204,7 +204,12 @@ public class LinHashMap <K, V>
                           //out.println("What is thisL "+temp3.nKeys);
                           temp3.nKeys++;
                           temp3.next = new Bucket(null);
-                          hTable.set(z,temp3);
+                          out.println("Z: " + z +" Key: "+ b.key[p] + " table size: " + hTable.size());
+                          if(z<hTable.size()){
+                        	  hTable.set(z,temp3);
+                          }else{
+                        	  hTable.set(z-hTable.size(),temp3);
+                          }
                           //out.println("\t\t\tKey: " + b.key[p] + " And the value of :" + b.value[p]+ " nKeys: "+temp3.nKeys);
                       }
 
@@ -325,7 +330,7 @@ public class LinHashMap <K, V>
     public static void main (String [] args)
     {
 
-        int totalKeys    = 500;
+        int totalKeys    = 10000;
         boolean RANDOMLY = true;
 
         LinHashMap <Integer, Integer> ht = new LinHashMap <> (Integer.class, Integer.class, 4);
@@ -338,7 +343,7 @@ public class LinHashMap <K, V>
               ran = rng.nextInt (2 * totalKeys);
               ht.put (ran, i * i);
               random[i-1] = ran;
-              ht.print ();
+              //ht.print ();
             }
         } else {
             for (int i = 1; i <= totalKeys; i += 1) {
@@ -348,6 +353,7 @@ public class LinHashMap <K, V>
         } // if
 
         ht.print ();
+        
         if(RANDOMLY){
           for(int x:random)out.println ("key = " + x + " value = " + ht.get (x));
         }else{

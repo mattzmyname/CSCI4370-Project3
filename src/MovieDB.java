@@ -140,7 +140,7 @@ class MovieDB
         t_join.print ();
 
         out.println ();
-        Table t_join2 = movie.h_join ("title year", "movieTitle movieYear", starsIn);
+        Table t_join2 = movie.i_join ("title year", "movieTitle movieYear", starsIn);
         t_join2.print ();
 /*
         out.println ();

@@ -393,22 +393,21 @@ public class Table
     		return null;
     	}
 
+    	for(String t:t_attrs){
+    		for(String u:u_attrs){
+    			for(Comparable[] ttup:this.tuples){
+    				KeyType keyVal = new KeyType(extract(ttup,t_attrs)); //this will be our foreign key to compare
+    				Comparable[] utup = table2.index.get(keyVal);
+    				if(ttup==utup){
+    					rows.add(ArrayUtil.concat(ttup,utup));
+    				}
+    			}
 
-          	for(int i = 0; i < u_attrs.length; i++){
-          		Comparable[] ttup = tuples.get(i);
-              KeyType keyVal = new KeyType(extract(ttup,u_attrs)); //this will be our foreign key to compare
-          		Comparable[] utup = table2.index.get(keyVal);
-              if(ttup==utup){
-                out.println(ttup + " is the same as " + utup + "?");
-                rows.add(ArrayUtil.concat(ttup,utup));
-              }
-              out.println(ttup + " is the same as " + utup + "?");
-            }
-
-
-        return new Table((name + count++), ArrayUtil.concat(attribute, table2.attribute),
-        								ArrayUtil.concat(domain, table2.domain), key, rows);
-    } // i_join
+    		}
+    	}
+        return new Table((name + count++), ArrayUtil.concat(attribute, table2.attribute), ArrayUtil.concat(domain, table2.domain), key, rows);    
+     } // i_join
+    // i_join
 
     /************************************************************************************
      * Join this table and table2 by performing an "equi-join".  Same as above, but implemented

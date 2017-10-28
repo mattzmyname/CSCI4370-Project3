@@ -66,7 +66,7 @@ public class TestTupleGenerator
 
         String [] tables = { "Student", "Professor", "Course", "Teaching", "Transcript" };
         
-        int tups [] = new int [] { 10000, 1000, 2000, 50000, 10000 };
+        int tups [] = new int [] {500000, 1000, 2000, 50000, 10000 };
     
         System.out.println("Generating Tuples in resultTest...");
         Comparable [][][] resultTest = test.generate (tups);
@@ -150,7 +150,7 @@ public class TestTupleGenerator
             worksheet.addCell(num);
         }//for
         
-       
+       /*
         System.out.println("Student Range Q bpSelect  "+ tups[0]);
         rowCounter++;
         Label select2 = new Label (rowCounter,0, "Bplus Range Q Select  "+tups[0]);
@@ -164,11 +164,24 @@ public class TestTupleGenerator
             Number num = new Number(rowCounter, 1+i, duration);
             worksheet.addCell(num);
         }//for
-        
-       
-        System.out.println("\tStudent join with Transcript - " + tups[0] + " tuples + " +tups[4] +" tuples");
+        */
+        System.out.println("Student Range Q Seq Select  "+ tups[0]);
         rowCounter++;
-        Label join1 = new Label (rowCounter,0, "Student Join Transcript");
+        Label select2 = new Label (rowCounter,0, "Seq Range Q Select  "+tups[0]);
+        worksheet.addCell(select2);
+        for( int i = 0; i < 50 ; i++){
+            startTime = System.nanoTime();
+            Student.select(t -> t[Student.col("id")].compareTo( resultTest[0][ran.nextInt(tups[0])][0]) > 0);
+            endTime = System.nanoTime();
+            duration = (double)(endTime - startTime)/1000000000.0;
+            System.out.println("\t\t" + duration + " Secs");
+            Number num = new Number(rowCounter, 1+i, duration);
+            worksheet.addCell(num);
+        }//for
+        
+        System.out.println("\tStudent hjoin with Transcript - " + tups[0] + " tuples + " +tups[4] +" tuples");
+        rowCounter++;
+        Label join1 = new Label (rowCounter,0, "Student hJoin Transcript");
         worksheet.addCell(join1);
         for( int i = 0; i < 50 ; i++){
             startTime = System.nanoTime();
@@ -182,7 +195,7 @@ public class TestTupleGenerator
         }//for
         
         /*
-        System.out.println("Student ijoin with Transcript - 10000 tuples + 50000 tuples");
+        System.out.println("Student ijoin with Transcript - tups[0] tuples + tups[4] tuples");
         rowCounter++;
         Label join2 = new Label (rowCounter,0, "Student iJoin Transcript");
         worksheet.addCell(join2);

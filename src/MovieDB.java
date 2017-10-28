@@ -95,7 +95,7 @@ class MovieDB
         movieExec.save ();
         studio.save ();
         movieStar.printIndex ();
-/*
+
         //--------------------- project: title year
 
         out.println ();
@@ -132,17 +132,13 @@ class MovieDB
         out.println ();
         Table t_minus = movie.minus (cinema);
         t_minus.print ();
-*/
+
         //--------------------- equi-join: movie JOIN studio ON studioName = name
 
         out.println ();
         Table t_join = movie.h_join ("studioName", "name", studio);
         t_join.print ();
-
-        out.println ();
-        Table t_join2 = movie.h_join ("title year", "movieTitle movieYear", starsIn);
-        t_join2.print ();
-/*
+        
         out.println ();
         Table t_join2 = movie.i_join ("studioName", "name", studio);
         t_join.print ();
@@ -160,7 +156,7 @@ class MovieDB
         out.println ();
         Table bpt_select = movie.select (new KeyType ("Rambo"),new KeyType ("Star_Wars_2"));
         bpt_select.print ();
-*/
+
     } // main
 
 } // MovieDB class
